@@ -19,6 +19,9 @@
       --success: #3dffb8;
       --shadow-window: rgba(0,0,0,0.85);
       --scanline: rgba(0, 255, 170, 0.06);
+      --term-bg: #020308;
+      --term-fg: #e6faff;
+      --term-accent: #26ffe6;
     }
 
     * {
@@ -62,14 +65,7 @@
         inset 0 0 200px rgba(0,0,0,0.9);
     }
 
-    /* SCREENS ORDER:
-       1) BIOS
-       2) LOGIN
-       3) BOOT
-       4) DESKTOP
-    */
-
-    /* BIOS screen */
+    /* BIOS */
     #bios-screen {
       position: fixed;
       inset: 0;
@@ -97,7 +93,7 @@
       color: #6b7b99;
     }
 
-    /* Login screen */
+    /* Login */
     #login-screen {
       position: fixed;
       inset: 0;
@@ -177,7 +173,7 @@
       color: var(--text-muted);
     }
 
-    /* Boot screen */
+    /* Boot */
     #boot-screen {
       position: fixed;
       inset: 0;
@@ -345,22 +341,29 @@
       text-shadow: 0 0 8px rgba(38,255,230,0.9);
     }
 
+    /* ResurrectOS-style header controls */
     .window-controls {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       margin-right: 4px;
     }
 
     .wc-btn {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.7);
+      width: 18px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid rgba(38,255,230,0.7);
+      background: radial-gradient(circle at top, rgba(38,255,230,0.3), rgba(0,0,0,0.9));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--accent-soft);
     }
 
-    .wc-close { background: #ff5f57; }
-    .wc-min   { background: #febc2e; }
-    .wc-max   { background: #28c840; }
+    .wc-close::before { content: "X"; }
+    .wc-min::before   { content: "–"; }
+    .wc-max::before   { content: "□"; }
 
     .window-body {
       padding: 8px;
@@ -439,7 +442,7 @@
       opacity: 1;
     }
 
-    /* Utility styles */
+    /* Utility */
     .mono {
       font-family: "Courier New", monospace;
     }
@@ -510,28 +513,6 @@
       margin-top: 4px;
     }
 
-    .terminal-screen {
-      background: rgba(0,0,0,0.75);
-      border: 1px solid rgba(38,255,230,0.5);
-      padding: 6px;
-      max-height: 220px;
-      overflow-y: auto;
-      font-size: 12px;
-      color: #7efff3;
-    }
-
-    .terminal-input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-top: 1px solid rgba(38,255,230,0.3);
-      padding: 4px;
-      color: #7efff3;
-      font-family: "Courier New", monospace;
-      font-size: 12px;
-      outline: none;
-    }
-
     .file-list {
       font-size: 12px;
     }
@@ -575,6 +556,73 @@
 
     .school-muted {
       opacity: 0.6;
+    }
+
+    /* Sandbox.bio-style terminal */
+    .term-container {
+      background: var(--term-bg);
+      border: 1px solid rgba(38,255,230,0.4);
+      padding: 6px;
+      height: 220px;
+      overflow-y: auto;
+      font-size: 12px;
+      color: var(--term-fg);
+      position: relative;
+    }
+
+    .term-line {
+      white-space: pre-wrap;
+    }
+
+    .term-prompt {
+      color: var(--term-accent);
+    }
+
+    .term-input-line {
+      display: flex;
+      align-items: baseline;
+    }
+
+    #term-hidden-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .term-cursor {
+      display: inline-block;
+      width: 7px;
+      background: var(--term-accent);
+      margin-left: 1px;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+
+    /* nano-style editor in terminal */
+    .nano-bar {
+      border-top: 1px solid rgba(38,255,230,0.5);
+      margin-top: 4px;
+      padding-top: 2px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .nano-buffer {
+      background: rgba(0,0,0,0.85);
+      border: 1px solid rgba(38,255,230,0.4);
+      width: 100%;
+      height: 120px;
+      color: var(--term-fg);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      resize: none;
+      outline: none;
+      padding: 4px;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -684,6 +732,18 @@ Mode can be changed later in Settings &gt; Appearance.
         <span>▥</span>
         <div class="dock-indicator"></div>
       </div>
+      <div class="dock-icon" data-app="fps" title="FPS Prototype" onclick="openApp('fps')">
+        <span>♐</span>
+        <div class="dock-indicator"></div>
+      </div>
+      <div class="dock-icon" data-app="road" title="Neon Road" onclick="openApp('road')">
+        <span>≡</span>
+        <div class="dock-indicator"></div>
+      </div>
+      <div class="dock-icon" data-app="hack" title="Hacker Sim" onclick="openApp('hack')">
+        <span>¤</span>
+        <div class="dock-indicator"></div>
+      </div>
       <div class="dock-icon" data-app="settings" title="Settings" onclick="openApp('settings')">
         <span>☰</span>
         <div class="dock-indicator"></div>
@@ -694,11 +754,11 @@ Mode can be changed later in Settings &gt; Appearance.
   <script>
     // Global state
     const globalState = {
-      mode: "school", // "school" or "hacker"
+      mode: "school",
       user: "Daxton"
     };
 
-    // ---------- BIOS → LOGIN ----------
+    // BIOS → LOGIN
     document.addEventListener("keydown", (e) => {
       const bios = document.getElementById("bios-screen");
       if (!bios) return;
@@ -713,7 +773,7 @@ Mode can be changed later in Settings &gt; Appearance.
       document.getElementById("login-screen").style.display = "flex";
     });
 
-    // ---------- LOGIN ----------
+    // LOGIN
     document.getElementById("login-button").addEventListener("click", () => {
       const user = document.getElementById("login-user").value.trim() || "User";
       const mode = document.getElementById("login-mode").value;
@@ -725,7 +785,7 @@ Mode can be changed later in Settings &gt; Appearance.
       startBootSequence();
     });
 
-    // ---------- BOOT ----------
+    // BOOT
     const bootLinesBase = [
       "[BOOT] ResurrectOS-Micro // CyberDeck kernel initializing...",
       "[BUS] Attaching virtual cartridge: CLOUDDECK...",
@@ -750,7 +810,6 @@ Mode can be changed later in Settings &gt; Appearance.
       document.getElementById("boot-log").textContent = "";
       document.getElementById("boot-bar").style.width = "0%";
 
-      // Adjust lines based on mode
       const lines = [...bootLinesBase];
       if (globalState.mode === "school") {
         lines.push("[MODE] School-friendly visuals engaged.");
@@ -791,7 +850,7 @@ Mode can be changed later in Settings &gt; Appearance.
       openApp("terminal");
     }
 
-    // ---------- MODE VISUALS ----------
+    // MODE VISUALS
     function applyModeVisuals() {
       const body = document.body;
       if (globalState.mode === "school") {
@@ -801,7 +860,7 @@ Mode can be changed later in Settings &gt; Appearance.
       }
     }
 
-    // ---------- Window manager ----------
+    // Window manager
     const windows = {};
     let zCounter = 10;
 
@@ -932,7 +991,7 @@ Mode can be changed later in Settings &gt; Appearance.
       else icon.classList.remove("running");
     }
 
-    // ---------- Apps ----------
+    // Apps router
     function openApp(appId) {
       switch (appId) {
         case "terminal": openTerminal(); break;
@@ -946,69 +1005,281 @@ Mode can be changed later in Settings &gt; Appearance.
         case "lore":     openLore(); break;
         case "files":    openFiles(); break;
         case "settings": openSettings(); break;
+        case "fps":      openFPS(); break;
+        case "road":     openRoad(); break;
+        case "hack":     openHack(); break;
       }
     }
 
-    // Terminal
+    // Sandbox.bio-style interactive terminal (with nano-like editor)
     function openTerminal() {
       const id = "terminal";
       const html = `
         <div class="mono">
-          <div class="terminal-screen" id="term-screen">
-RESURRECTOS-MICRO // CLOUDDECK
-USER: ${globalState.user}
-MODE: ${globalState.mode.toUpperCase()}
-
-TYPE 'HELP' FOR COMMANDS.
-          </div>
-          <input class="terminal-input" id="term-input" placeholder="> type a command..." autocomplete="off" />
+          <div class="term-container" id="term-container"></div>
+          <input id="term-hidden-input" autocomplete="off" />
         </div>
       `;
-      createWindow(id, "Cyber Terminal", html, 480, 280);
+      createWindow(id, "Terminal", html, 500, 300);
 
-      const input = document.getElementById("term-input");
-      const screen = document.getElementById("term-screen");
+      const cont = document.getElementById("term-container");
+      const hidden = document.getElementById("term-hidden-input");
 
-      function printLine(line) {
-        screen.textContent += "\n" + line;
-        screen.scrollTop = screen.scrollHeight;
+      const fs = {
+        "/readme.txt": "ResurrectOS-Micro CloudDeck\nA tiny ritual OS by Daxton Merrill.",
+        "/notes.txt": "Your notes live only in RAM.",
+        "/lore.txt": "Open the Lore app for full story.",
+      };
+
+      let cwd = "/";
+      let history = [];
+      let historyIndex = -1;
+      let nanoMode = false;
+      let nanoFile = null;
+
+      function prompt() {
+        const line = document.createElement("div");
+        line.className = "term-input-line term-line";
+        const promptSpan = document.createElement("span");
+        promptSpan.className = "term-prompt";
+        promptSpan.textContent = `${globalState.user.toLowerCase()}@resurrectos:${cwd}$ `;
+        const inputSpan = document.createElement("span");
+        inputSpan.id = "term-current-input";
+        const cursorSpan = document.createElement("span");
+        cursorSpan.className = "term-cursor";
+        line.appendChild(promptSpan);
+        line.appendChild(inputSpan);
+        line.appendChild(cursorSpan);
+        cont.appendChild(line);
+        cont.scrollTop = cont.scrollHeight;
       }
 
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          const raw = input.value;
-          const cmd = raw.trim().toUpperCase();
-          printLine("> " + raw);
-          input.value = "";
-          if (!cmd) return;
+      function print(text, cls="") {
+        const line = document.createElement("div");
+        line.className = "term-line " + cls;
+        line.textContent = text;
+        cont.appendChild(line);
+        cont.scrollTop = cont.scrollHeight;
+      }
 
-          switch (cmd) {
-            case "HELP":
-              printLine("AVAILABLE: HELP, ABOUT, MODE, CLEAR, LORE, GAMES");
-              break;
-            case "ABOUT":
-              printLine("ResurrectOS-Micro: CloudDeck build, no hardware cartridge needed.");
-              break;
-            case "MODE":
-              printLine("Current mode: " + globalState.mode.toUpperCase());
-              break;
-            case "LORE":
-              printLine("Open the LORE app from dock for full story.");
-              break;
-            case "GAMES":
-              printLine("Available mini-games: NEON SNAKE, DODGEGRID.");
-              break;
-            case "CLEAR":
-              screen.textContent = "RESURRECTOS-MICRO // CLOUDDECK\nSCREEN CLEARED.";
-              break;
-            default:
-              printLine("UNKNOWN COMMAND. THE CLOUD SHELL SHRUGS.");
-              break;
+      function clearTerm() {
+        cont.innerHTML = "";
+      }
+
+      function listFiles() {
+        const keys = Object.keys(fs);
+        if (keys.length === 0) {
+          print("(empty)");
+        } else {
+          keys.forEach(k => print(k));
+        }
+      }
+
+      function handleLine(cmdRaw) {
+        const cmd = cmdRaw.trim();
+        if (!cmd) return;
+
+        if (nanoMode) {
+          // nano controls inside editor footer; we don't handle here while active
+          return;
+        }
+
+        const parts = cmd.split(" ");
+        const base = parts[0];
+        const arg = parts.slice(1).join(" ");
+
+        switch (base) {
+          case "help":
+            print("Commands: help, clear, ls, cd, cat, nano <file>, whoami, sysinfo, neofetch, scan, connect, hack, games, open <app>, exit");
+            break;
+          case "clear":
+            clearTerm();
+            break;
+          case "ls":
+            listFiles();
+            break;
+          case "cd":
+            if (!arg || arg === "/") {
+              cwd = "/";
+            } else {
+              print("No real directories here; staying in " + cwd);
+            }
+            break;
+          case "cat":
+            if (!arg) {
+              print("Usage: cat <file>");
+            } else if (fs[arg]) {
+              print(fs[arg]);
+            } else {
+              print("cat: no such file: " + arg);
+            }
+            break;
+          case "nano":
+            if (!arg) {
+              print("Usage: nano <file>");
+            } else {
+              openNano(arg);
+            }
+            break;
+          case "whoami":
+            print(globalState.user.toLowerCase());
+            break;
+          case "sysinfo":
+          case "neofetch":
+            print("ResurrectOS-Micro // CloudDeck");
+            print("User: " + globalState.user);
+            print("Mode: " + globalState.mode.toUpperCase());
+            print("Kernel: Browser JS");
+            print("Origin: Daxton Merrill");
+            break;
+          case "scan":
+            print("Visible nodes: GATE");
+            break;
+          case "connect":
+            if (!arg) {
+              print("Usage: connect <node>");
+            } else {
+              print("Simulated connection to " + arg + ". For real puzzle, open Hacker Sim.");
+            }
+            break;
+          case "hack":
+            print("For full hacking puzzle, open Hacker Sim from dock.");
+            break;
+          case "games":
+            print("Games: snake, dodger, fps, road, hack.");
+            break;
+          case "open":
+            if (!arg) {
+              print("Usage: open <app>");
+            } else {
+              openApp(arg);
+            }
+            break;
+          case "exit":
+            print("Session not closable from here. Use browser controls.");
+            break;
+          default:
+            print("Unknown command: " + base);
+        }
+      }
+
+      function openNano(path) {
+        nanoMode = true;
+        nanoFile = path;
+        if (!fs[path]) fs[path] = "";
+        print(`Opening nano on ${path}`);
+        const wrap = document.createElement("div");
+        const ta = document.createElement("textarea");
+        ta.className = "nano-buffer";
+        ta.value = fs[path];
+        const bar = document.createElement("div");
+        bar.className = "nano-bar";
+        bar.textContent = "^S Save  ^X Exit  (Ctrl+S / Ctrl+X)";
+
+        wrap.appendChild(ta);
+        wrap.appendChild(bar);
+        cont.appendChild(wrap);
+        cont.scrollTop = cont.scrollHeight;
+        ta.focus();
+
+        ta.addEventListener("keydown", (e) => {
+          if (e.ctrlKey && (e.key === "s" || e.key === "S")) {
+            e.preventDefault();
+            fs[path] = ta.value;
           }
+          if (e.ctrlKey && (e.key === "x" || e.key === "X")) {
+            e.preventDefault();
+            nanoMode = false;
+            nanoFile = null;
+            // remove editor, leave lines
+            wrap.remove();
+            prompt();
+            hidden.focus();
+          }
+        });
+      }
+
+      // Input handling
+      function syncVisibleInput() {
+        const span = document.getElementById("term-current-input");
+        if (!span) return;
+        span.textContent = hidden.value;
+        cont.scrollTop = cont.scrollHeight;
+      }
+
+      hidden.addEventListener("input", syncVisibleInput);
+
+      document.addEventListener("keydown", (e) => {
+        const termWin = windows["terminal"];
+        if (!termWin) return; // terminal closed
+        // focus terminal if active
+        if (e.key === "Tab") {
+          // autocomplete basic commands & files
+          e.preventDefault();
+          if (nanoMode) return;
+          const current = hidden.value;
+          const tokens = current.split(" ");
+          const last = tokens[tokens.length - 1];
+          if (!last) return;
+          const commands = ["help","clear","ls","cd","cat","nano","whoami","sysinfo","neofetch","scan","connect","hack","games","open","exit"];
+          const candidates = commands.concat(Object.keys(fs));
+          const match = candidates.find(c => c.startsWith(last));
+          if (match) {
+            tokens[tokens.length - 1] = match;
+            hidden.value = tokens.join(" ");
+            syncVisibleInput();
+          }
+          return;
+        }
+
+        if (document.activeElement !== hidden && !nanoMode) {
+          hidden.focus();
+        }
+
+        if (!nanoMode && e.key === "ArrowUp") {
+          e.preventDefault();
+          if (history.length > 0) {
+            if (historyIndex === -1) historyIndex = history.length - 1;
+            else historyIndex = Math.max(0, historyIndex - 1);
+            hidden.value = history[historyIndex];
+            syncVisibleInput();
+          }
+        } else if (!nanoMode && e.key === "ArrowDown") {
+          e.preventDefault();
+          if (history.length > 0) {
+            if (historyIndex === -1) return;
+            historyIndex++;
+            if (historyIndex >= history.length) {
+              historyIndex = -1;
+              hidden.value = "";
+            } else {
+              hidden.value = history[historyIndex];
+            }
+            syncVisibleInput();
+          }
+        } else if (!nanoMode && e.key === "Enter") {
+          e.preventDefault();
+          const value = hidden.value;
+          const line = document.getElementById("term-current-input");
+          if (line) {
+            line.textContent = value;
+            const cur = line.nextSibling;
+            if (cur && cur.classList.contains("term-cursor")) cur.remove();
+          }
+          hidden.value = "";
+          syncVisibleInput();
+          history.push(value);
+          historyIndex = -1;
+          handleLine(value);
+          prompt();
         }
       });
 
-      input.focus();
+      // Initial output
+      print("ResurrectOS-Micro // CloudDeck");
+      print("Interactive shell. Type 'help' for commands.");
+      prompt();
+      hidden.focus();
     }
 
     // Notes
@@ -1118,7 +1389,7 @@ TYPE 'HELP' FOR COMMANDS.
       createWindow(id, "Lore", html, 460, 260);
     }
 
-    // Fake File Explorer
+    // File Explorer
     function openFiles() {
       const id = "files";
       const html = `
@@ -1140,7 +1411,7 @@ TYPE 'HELP' FOR COMMANDS.
       createWindow(id, "File Explorer", html, 420, 260);
     }
 
-    // Settings (school/hacker mode)
+    // Settings
     function openSettings() {
       const id = "settings";
       const html = `
@@ -1193,7 +1464,7 @@ TYPE 'HELP' FOR COMMANDS.
       });
     }
 
-    // Game: Neon Snake
+    // Neon Snake
     function openSnake() {
       const id = "snake";
       const html = `
@@ -1245,7 +1516,6 @@ TYPE 'HELP' FOR COMMANDS.
         ctx.fillStyle = "#02030a";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // grid
         ctx.strokeStyle = "rgba(38,255,230,0.3)";
         for (let i = 0; i <= gridSize; i++) {
           ctx.beginPath();
@@ -1259,14 +1529,12 @@ TYPE 'HELP' FOR COMMANDS.
           ctx.stroke();
         }
 
-        // snake
         for (let i = 0; i < snake.length; i++) {
           const s = snake[i];
           ctx.fillStyle = i === 0 ? "#26ffe6" : "#ff2fd4";
           ctx.fillRect(s.x * cell + 2, s.y * cell + 2, cell - 4, cell - 4);
         }
 
-        // food
         ctx.fillStyle = "#ffdf40";
         ctx.fillRect(food.x * cell + 4, food.y * cell + 4, cell - 8, cell - 8);
 
@@ -1309,7 +1577,7 @@ TYPE 'HELP' FOR COMMANDS.
       }
     }
 
-    // Game: DodgeGrid
+    // DodgeGrid
     function openDodger() {
       const id = "dodger";
       const html = `
@@ -1362,7 +1630,6 @@ TYPE 'HELP' FOR COMMANDS.
         ctx.fillStyle = "#02030a";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // grid
         ctx.strokeStyle = "rgba(255,47,212,0.35)";
         for (let i = 0; i < canvas.width; i += 20) {
           ctx.beginPath();
@@ -1378,11 +1645,9 @@ TYPE 'HELP' FOR COMMANDS.
           ctx.stroke();
         }
 
-        // player
         ctx.fillStyle = "#26ffe6";
         ctx.fillRect(player.x, player.y, player.w, player.h);
 
-        // blocks
         ctx.fillStyle = "#ff2fd4";
         for (let b of blocks) {
           ctx.fillRect(b.x, b.y, b.w, b.h);
@@ -1422,6 +1687,363 @@ TYPE 'HELP' FOR COMMANDS.
             break;
         }
       }
+    }
+
+    // FPS prototype (raycast hallway)
+    function openFPS() {
+      const id = "fps";
+      const html = `
+        <div class="mono centered">
+          <canvas id="fps-canvas" width="320" height="200" class="game-canvas"></canvas>
+          <p class="hint">WASD to move, mouse to look (click inside first).</p>
+        </div>
+      `;
+      createWindow(id, "FPS Prototype", html, 360, 280);
+
+      const canvas = document.getElementById("fps-canvas");
+      const ctx = canvas.getContext("2d");
+
+      const map = [
+        "########",
+        "#......#",
+        "#..##..#",
+        "#......#",
+        "########"
+      ];
+      const mapW = map[0].length;
+      const mapH = map.length;
+
+      let px = 2.5;
+      let py = 2.5;
+      let pa = 0;
+      let mouseLocked = false;
+
+      function isWall(x, y) {
+        const mx = Math.floor(x);
+        const my = Math.floor(y);
+        if (mx < 0 || my < 0 || mx >= mapW || my >= mapH) return true;
+        return map[my][mx] === "#";
+      }
+
+      function castRays() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const fov = Math.PI / 3;
+        const numRays = w;
+        const maxDepth = 10;
+
+        ctx.fillStyle = "#02030a";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.fillStyle = "#050a30";
+        ctx.fillRect(0, 0, w, h / 2);
+        ctx.fillStyle = "#050509";
+        ctx.fillRect(0, h / 2, w, h / 2);
+
+        for (let i = 0; i < numRays; i++) {
+          const rayAngle = pa - fov / 2 + (i / numRays) * fov;
+          let dist = 0;
+          let hit = false;
+
+          let rx = px;
+          let ry = py;
+
+          while (!hit && dist < maxDepth) {
+            dist += 0.05;
+            rx = px + Math.cos(rayAngle) * dist;
+            ry = py + Math.sin(rayAngle) * dist;
+            if (isWall(rx, ry)) {
+              hit = true;
+            }
+          }
+
+          if (hit) {
+            const corrected = dist * Math.cos(rayAngle - pa);
+            const lineHeight = Math.min(h, (1 / corrected) * 200);
+            const brightness = Math.max(0.2, 1 - corrected / maxDepth);
+            const r = Math.floor(38 * brightness);
+            const g = Math.floor(255 * brightness);
+            const b = Math.floor(230 * brightness);
+
+            ctx.strokeStyle = `rgb(${r},${g},${b})`;
+            ctx.beginPath();
+            ctx.moveTo(i, (h - lineHeight) / 2);
+            ctx.lineTo(i, (h + lineHeight) / 2);
+            ctx.stroke();
+          }
+        }
+      }
+
+      function loop() {
+        castRays();
+        requestAnimationFrame(loop);
+      }
+      loop();
+
+      const keys = { w:false, a:false, s:false, d:false };
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "w" || e.key === "W") keys.w = true;
+        if (e.key === "s" || e.key === "S") keys.s = true;
+        if (e.key === "a" || e.key === "A") keys.a = true;
+        if (e.key === "d" || e.key === "D") keys.d = true;
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (e.key === "w" || e.key === "W") keys.w = false;
+        if (e.key === "s" || e.key === "S") keys.s = false;
+        if (e.key === "a" || e.key === "A") keys.a = false;
+        if (e.key === "d" || e.key === "D") keys.d = false;
+      });
+
+      function updatePlayer() {
+        const speed = 0.05;
+        const rot = 0.04;
+
+        if (keys.a) pa -= rot;
+        if (keys.d) pa += rot;
+
+        let nx = px;
+        let ny = py;
+
+        if (keys.w) {
+          nx += Math.cos(pa) * speed;
+          ny += Math.sin(pa) * speed;
+        }
+        if (keys.s) {
+          nx -= Math.cos(pa) * speed;
+          ny -= Math.sin(pa) * speed;
+        }
+
+        if (!isWall(nx, py)) px = nx;
+        if (!isWall(px, ny)) py = ny;
+
+        setTimeout(updatePlayer, 16);
+      }
+      updatePlayer();
+
+      canvas.addEventListener("click", () => {
+        canvas.requestPointerLock?.();
+      });
+
+      document.addEventListener("pointerlockchange", () => {
+        mouseLocked = document.pointerLockElement === canvas;
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!mouseLocked) return;
+        pa += e.movementX * 0.002;
+      });
+    }
+
+    // Neon Road
+    function openRoad() {
+      const id = "road";
+      const html = `
+        <div class="mono centered">
+          <canvas id="road-canvas" width="320" height="200" class="game-canvas"></canvas>
+          <p class="hint">Use A/D or ←/→ to drift on the neon road.</p>
+        </div>
+      `;
+      createWindow(id, "Neon Road", html, 360, 280);
+
+      const canvas = document.getElementById("road-canvas");
+      const ctx = canvas.getContext("2d");
+
+      let playerOffset = 0;
+      const lines = [];
+
+      for (let i = 0; i < 40; i++) {
+        lines.push({ z: i * 5 });
+      }
+
+      function update() {
+        lines.forEach(l => {
+          l.z -= 0.4;
+          if (l.z < 1) l.z += 200;
+        });
+      }
+
+      function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.fillStyle = "#02030a";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.fillStyle = "#050a30";
+        ctx.fillRect(0, 0, w, h / 2);
+
+        ctx.fillStyle = "#050509";
+        ctx.fillRect(0, h / 2, w, h / 2);
+
+        const horizon = h / 2;
+        const centerX = w / 2 + playerOffset;
+
+        lines.forEach(l => {
+          const z = l.z;
+          const perspective = 140 / z;
+          const roadWidth = 40 * perspective;
+
+          const y = horizon + (z * 2);
+          const x1 = centerX - roadWidth;
+          const x2 = centerX + roadWidth;
+
+          ctx.strokeStyle = "#26ffe6";
+          ctx.beginPath();
+          ctx.moveTo(x1, y);
+          ctx.lineTo(x2, y);
+          ctx.stroke();
+
+          ctx.strokeStyle = "#ff2fd4";
+          ctx.beginPath();
+          ctx.moveTo(centerX, y);
+          ctx.lineTo(centerX, y + 2);
+          ctx.stroke();
+        });
+      }
+
+      function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+      }
+      loop();
+
+      document.addEventListener("keydown", (e) => {
+        const step = 5;
+        if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") {
+          playerOffset -= step;
+        }
+        if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") {
+          playerOffset += step;
+        }
+      });
+    }
+
+    // Hacker Sim
+    function openHack() {
+      const id = "hack";
+      const html = `
+        <div class="mono">
+          <div class="term-container" id="hack-screen">
+RESURRECTOS // NETSIM
+Objective: breach the CORE node by chaining access.
+
+Commands:
+  SCAN               - list visible nodes
+  CONNECT <node>     - connect to a node
+  CRACK              - attempt access on current node
+  STATUS             - show current node
+  HELP               - show this help
+
+Start with: SCAN
+          </div>
+          <input class="login-input" id="hack-input" placeholder="> SCAN" autocomplete="off" />
+        </div>
+      `;
+      createWindow(id, "Hacker Sim", html, 480, 280);
+
+      const input = document.getElementById("hack-input");
+      const screen = document.getElementById("hack-screen");
+
+      const nodes = {
+        GATE: { cracked: false, next: ["HUB"] },
+        HUB:  { cracked: false, next: ["CORE"] },
+        CORE: { cracked: false, next: [] }
+      };
+      let current = null;
+
+      function printLine(line) {
+        const div = document.createElement("div");
+        div.className = "term-line";
+        div.textContent = line;
+        screen.appendChild(div);
+        screen.scrollTop = screen.scrollHeight;
+      }
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const raw = input.value;
+          const cmd = raw.trim().toUpperCase();
+          printLine("> " + raw);
+          input.value = "";
+          if (!cmd) return;
+
+          if (cmd === "HELP") {
+            printLine("Commands: SCAN, CONNECT <node>, CRACK, STATUS");
+            return;
+          }
+
+          if (cmd === "SCAN") {
+            if (!current) {
+              printLine("Visible nodes: GATE");
+            } else if (current === "GATE") {
+              printLine("Visible nodes: HUB");
+            } else if (current === "HUB") {
+              printLine("Visible nodes: CORE");
+            } else {
+              printLine("No further nodes visible.");
+            }
+            return;
+          }
+
+          if (cmd.startsWith("CONNECT")) {
+            const parts = cmd.split(" ");
+            const node = parts[1];
+            if (!node) {
+              printLine("CONNECT requires a node name.");
+              return;
+            }
+            if (!nodes[node]) {
+              printLine("No such node: " + node);
+              return;
+            }
+            if (node === "GATE" && !current) {
+              current = node;
+              printLine("Connected to GATE.");
+            } else if (current === "GATE" && node === "HUB") {
+              current = node;
+              printLine("Connected to HUB.");
+            } else if (current === "HUB" && node === "CORE") {
+              current = node;
+              printLine("Connected to CORE.");
+            } else {
+              printLine("Link path invalid from here.");
+            }
+            return;
+          }
+
+          if (cmd === "STATUS") {
+            if (!current) printLine("Not connected. Use SCAN then CONNECT GATE.");
+            else printLine("Current node: " + current + " (cracked=" + nodes[current].cracked + ")");
+            return;
+          }
+
+          if (cmd === "CRACK") {
+            if (!current) {
+              printLine("No node connected. CONNECT something first.");
+              return;
+            }
+            if (nodes[current].cracked) {
+              printLine(current + " already cracked.");
+              return;
+            }
+            nodes[current].cracked = true;
+            printLine("Cracked " + current + ". Access granted.");
+            if (current === "CORE") {
+              printLine("CORE reached. Simulation complete. You win.");
+            } else {
+              printLine("Next visible node(s): " + nodes[current].next.join(", "));
+            }
+            return;
+          }
+
+          printLine("Unknown command. Type HELP.");
+        }
+      });
+
+      input.focus();
     }
   </script>
 </body>
